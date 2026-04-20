@@ -53,29 +53,36 @@ logBtn.addEventListener("click", async () => {
   logBtn.disabled = true;
   status.textContent = "Logging...";
 
-  chrome.tabs.sendMessage(tab.id, { type: "GET_PROBLEM" }, async (problemData) => {
-    if (chrome.runtime.lastError) {
-      status.textContent = "Refresh the LeetCode page and try again";
-      logBtn.disabled = false;
-      return;
-    }
-    if (!problemData?.title) {
-      status.textContent = "Could not read title — refresh page";
-      logBtn.disabled = false;
-      return;
-    }
-
-    const timerData = await new Promise(r => chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], r));
-    const elapsed = getElapsed(timerData);
-
-    try {
-      await logToNotion(problemData, elapsed);
-      status.textContent = "Saved to Notion!";
-      resetTimer(timerDisplay, startPauseBtn);
-    } catch (e) {
-      status.textContent = `Error: ${e.message}`;
-    }
-
-    logBtn.disabled = false;
+  const getProblem = (tabId) => new Promise((resolve) => {
+    chrome.tabs.sendMessage(tabId, { type: "GET_PROBLEM" }, (data) => {
+      if (chrome.runtime.lastError) resolve(null);
+      else resolve(data);
+    });
   });
+
+  let problemData = await getProblem(tab.id);
+
+  if (!problemData) {
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
+    problemData = await getProblem(tab.id);
+  }
+
+  if (!problemData?.title) {
+    status.textContent = "could not read page — try refreshing";
+    logBtn.disabled = false;
+    return;
+  }
+
+  const timerData = await new Promise(r => chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], r));
+  const elapsed = getElapsed(timerData);
+
+  try {
+    await logToNotion(problemData, elapsed);
+    status.textContent = "saved to notion!";
+    resetTimer(timerDisplay, startPauseBtn);
+  } catch (e) {
+    status.textContent = `error: ${e.message}`;
+  }
+
+  logBtn.disabled = false;
 });
