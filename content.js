@@ -1,9 +1,11 @@
 function getProblemData() {
-  const title =
+  const raw =
     document.querySelector('h1')?.innerText?.trim() ||
     document.querySelector('[data-cy="question-title"]')?.innerText?.trim() ||
     document.querySelector('.text-title-large')?.innerText?.trim() ||
     document.title.replace(/\s*[-|].*$/, '').trim();
+
+  const title = raw ? raw.replace(/^\d+\.\s*/, '') : raw;
 
   const difficultyEl =
     document.querySelector('[class*="text-difficulty-easy"]') ||
