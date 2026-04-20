@@ -5,34 +5,6 @@ const logBtn = document.getElementById("logBtn");
 const status = document.getElementById("status");
 const notesEl = document.getElementById("notes");
 
-const TOPICS = [
-  "array", "string", "binary search", "dynamic programming", "dfs", "bfs",
-  "graph", "tree", "binary tree", "binary search tree", "linked list",
-  "stack/queue", "heap", "trie", "hashtable", "matrix", "two pointers",
-  "sliding window", "recursion", "backtracking", "bit manipulation",
-  "math", "set", "sort", "design"
-];
-
-const selectedTopics = new Set();
-const topicsList = document.getElementById("topics-list");
-const topicCount = document.getElementById("topic-count");
-
-TOPICS.forEach(topic => {
-  const pill = document.createElement("button");
-  pill.className = "topic-pill";
-  pill.textContent = topic;
-  pill.addEventListener("click", () => {
-    if (selectedTopics.has(topic)) {
-      selectedTopics.delete(topic);
-      pill.classList.remove("selected");
-    } else {
-      selectedTopics.add(topic);
-      pill.classList.add("selected");
-    }
-    topicCount.textContent = selectedTopics.size ? `(${selectedTopics.size})` : "";
-  });
-  topicsList.appendChild(pill);
-});
 
 chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
   if (tab.url?.includes("leetcode.com/problems/")) {
@@ -121,9 +93,7 @@ logBtn.addEventListener("click", async () => {
     status.textContent = "saved to notion!";
     resetTimer(timerDisplay, startPauseBtn);
     notesEl.value = "";
-    selectedTopics.clear();
-    document.querySelectorAll(".topic-pill.selected").forEach(p => p.classList.remove("selected"));
-    topicCount.textContent = "";
+    clearTopics();
   } catch (e) {
     status.textContent = `error: ${e.message}`;
   }
