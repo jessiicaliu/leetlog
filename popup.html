@@ -18,12 +18,24 @@
         text-transform: lowercase;
       }
 
+      #header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+
+      #dino {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
+
       h1 {
         font-size: 17px;
         font-weight: 700;
         color: #4a9455;
-        text-align: center;
-        margin-bottom: 14px;
         letter-spacing: 0.5px;
       }
 
@@ -202,7 +214,10 @@
     </style>
   </head>
   <body>
-    <h1>leetlog</h1>
+    <div id="header">
+      <img src="icons/icon48.png" id="dino" alt="dino">
+      <h1>leetlog</h1>
+    </div>
 
     <div id="not-leetcode">
       open a leetcode problem<br>to start timing
