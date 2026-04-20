@@ -7,7 +7,25 @@
         padding: 12px;
         width: 200px;
       }
-      button {
+      #timer {
+        font-size: 32px;
+        text-align: center;
+        font-weight: bold;
+        letter-spacing: 2px;
+        margin: 8px 0;
+      }
+      .timer-btns {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .timer-btns button {
+        flex: 1;
+        padding: 6px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      #logBtn {
         width: 100%;
         padding: 10px;
         cursor: pointer;
@@ -22,10 +40,17 @@
     </style>
   </head>
   <body>
-    <button id="addBtn">Log to Notion</button>
+    <div id="timer">00:00</div>
+    <div class="timer-btns">
+      <button id="startPauseBtn">Start</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    <button id="logBtn">Log to Notion</button>
     <div id="status"></div>
 
     <script src="config.js"></script>
+    <script src="timer.js"></script>
+    <script src="notion.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

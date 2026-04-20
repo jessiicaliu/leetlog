@@ -1,7 +1,40 @@
-const btn = document.getElementById("addBtn");
+const timerDisplay = document.getElementById("timer");
+const startPauseBtn = document.getElementById("startPauseBtn");
+const resetBtn = document.getElementById("resetBtn");
+const logBtn = document.getElementById("logBtn");
 const status = document.getElementById("status");
 
-btn.addEventListener("click", async () => {
+// Timer controls
+startPauseBtn.addEventListener("click", () => {
+  chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
+    if (data.timerRunning) {
+      const elapsed = getElapsed(data);
+      chrome.storage.local.set({ timerBase: elapsed, timerRunning: false, timerStartedAt: null });
+      clearInterval(timerInterval);
+      startPauseBtn.textContent = "Start";
+    } else {
+      chrome.storage.local.set({ timerRunning: true, timerStartedAt: Date.now() });
+      startPauseBtn.textContent = "Pause";
+      startTicking(timerDisplay);
+    }
+  });
+});
+
+resetBtn.addEventListener("click", () => {
+  resetTimer(timerDisplay, startPauseBtn);
+});
+
+// Restore timer state when popup opens
+chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
+  timerDisplay.textContent = formatDisplay(getElapsed(data));
+  if (data.timerRunning) {
+    startPauseBtn.textContent = "Pause";
+    startTicking(timerDisplay);
+  }
+});
+
+// Log to Notion
+logBtn.addEventListener("click", async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
   if (!tab.url?.includes("leetcode.com/problems/")) {
@@ -9,66 +42,32 @@ btn.addEventListener("click", async () => {
     return;
   }
 
-  btn.disabled = true;
+  logBtn.disabled = true;
   status.textContent = "Logging...";
 
-  chrome.tabs.sendMessage(tab.id, { type: "GET_PROBLEM" }, async (data) => {
+  chrome.tabs.sendMessage(tab.id, { type: "GET_PROBLEM" }, async (problemData) => {
     if (chrome.runtime.lastError) {
       status.textContent = "Refresh the LeetCode page and try again";
-      btn.disabled = false;
+      logBtn.disabled = false;
       return;
     }
-    if (!data || !data.title) {
+    if (!problemData?.title) {
       status.textContent = "Could not read title — refresh page";
-      btn.disabled = false;
+      logBtn.disabled = false;
       return;
     }
 
-    const properties = {
-      Question: {
-        title: [{ text: { content: data.title } }]
-      },
-      Finished: {
-        date: { start: new Date().toISOString().split("T")[0] }
-      }
-    };
-
-    if (data.difficulty) {
-      properties.Difficulty = {
-        select: { name: data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1) }
-      };
-    }
-
-    if (data.tags?.length) {
-      properties.Problem = {
-        multi_select: data.tags.map(tag => ({ name: tag }))
-      };
-    }
+    const timerData = await new Promise(r => chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], r));
+    const elapsed = getElapsed(timerData);
 
     try {
-      const res = await fetch("https://api.notion.com/v1/pages", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${CONFIG.NOTION_API_KEY}`,
-          "Content-Type": "application/json",
-          "Notion-Version": "2022-06-28"
-        },
-        body: JSON.stringify({
-          parent: { database_id: CONFIG.DATABASE_ID },
-          properties
-        })
-      });
-
-      if (res.ok) {
-        status.textContent = "Saved to Notion!";
-      } else {
-        const err = await res.json();
-        status.textContent = `Error: ${err.message || res.status}`;
-      }
+      await logToNotion(problemData, elapsed);
+      status.textContent = "Saved to Notion!";
+      resetTimer(timerDisplay, startPauseBtn);
     } catch (e) {
-      status.textContent = "Network error";
+      status.textContent = `Error: ${e.message}`;
     }
 
-    btn.disabled = false;
+    logBtn.disabled = false;
   });
 });
