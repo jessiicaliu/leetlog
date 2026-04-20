@@ -37,6 +37,13 @@ TOPICS.forEach(topic => {
 chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
   if (tab.url?.includes("leetcode.com/problems/")) {
     document.getElementById("main").style.display = "block";
+    chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
+      if (!data.timerRunning && !data.timerBase) {
+        chrome.storage.local.set({ timerRunning: true, timerStartedAt: Date.now(), timerBase: 0 });
+        startPauseBtn.textContent = "pause";
+        startTicking(timerDisplay);
+      }
+    });
   } else {
     document.getElementById("not-leetcode").style.display = "block";
   }
@@ -66,7 +73,7 @@ resetBtn.addEventListener("click", () => {
 chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
   timerDisplay.textContent = formatDisplay(getElapsed(data));
   if (data.timerRunning) {
-    startPauseBtn.textContent = "Pause";
+    startPauseBtn.textContent = "pause";
     startTicking(timerDisplay);
   }
 });
