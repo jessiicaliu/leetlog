@@ -4,6 +4,35 @@ const resetBtn = document.getElementById("resetBtn");
 const logBtn = document.getElementById("logBtn");
 const status = document.getElementById("status");
 
+const TOPICS = [
+  "array", "string", "binary search", "dynamic programming", "dfs", "bfs",
+  "graph", "tree", "binary tree", "binary search tree", "linked list",
+  "stack/queue", "heap", "trie", "hashtable", "matrix", "two pointers",
+  "sliding window", "recursion", "backtracking", "bit manipulation",
+  "math", "set", "sort", "design"
+];
+
+const selectedTopics = new Set();
+const topicsList = document.getElementById("topics-list");
+const topicCount = document.getElementById("topic-count");
+
+TOPICS.forEach(topic => {
+  const pill = document.createElement("button");
+  pill.className = "topic-pill";
+  pill.textContent = topic;
+  pill.addEventListener("click", () => {
+    if (selectedTopics.has(topic)) {
+      selectedTopics.delete(topic);
+      pill.classList.remove("selected");
+    } else {
+      selectedTopics.add(topic);
+      pill.classList.add("selected");
+    }
+    topicCount.textContent = selectedTopics.size ? `(${selectedTopics.size})` : "";
+  });
+  topicsList.appendChild(pill);
+});
+
 chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
   if (tab.url?.includes("leetcode.com/problems/")) {
     document.getElementById("main").style.display = "block";
@@ -76,10 +105,15 @@ logBtn.addEventListener("click", async () => {
   const timerData = await new Promise(r => chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], r));
   const elapsed = getElapsed(timerData);
 
+  if (selectedTopics.size) problemData.tags = [...selectedTopics];
+
   try {
     await logToNotion(problemData, elapsed);
     status.textContent = "saved to notion!";
     resetTimer(timerDisplay, startPauseBtn);
+    selectedTopics.clear();
+    document.querySelectorAll(".topic-pill.selected").forEach(p => p.classList.remove("selected"));
+    topicCount.textContent = "";
   } catch (e) {
     status.textContent = `error: ${e.message}`;
   }
