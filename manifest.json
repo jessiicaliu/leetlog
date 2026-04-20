@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "LeetLog",
+  "name": "leetlog",
   "version": "1.0",
   "description": "Log LeetCode problems to Notion",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
