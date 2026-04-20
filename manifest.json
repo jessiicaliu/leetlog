@@ -3,8 +3,11 @@
   "name": "LeetLog",
   "version": "1.0",
   "description": "Log LeetCode problems to Notion",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "host_permissions": ["https://api.notion.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html"
   },

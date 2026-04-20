@@ -27,6 +27,8 @@ function getProblemData() {
   return { title, difficulty, tags, url: window.location.href };
 }
 
+chrome.runtime.sendMessage({ type: "LEETCODE_TAB_OPEN" });
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "GET_PROBLEM") {
     sendResponse(getProblemData());
