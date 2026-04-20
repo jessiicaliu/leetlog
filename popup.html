@@ -108,6 +108,30 @@
         transform: none;
       }
 
+      #notes {
+        width: 100%;
+        height: 58px;
+        resize: none;
+        border: 1.5px solid #b8ddb8;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.7);
+        padding: 7px 9px;
+        font-size: 11px;
+        font-family: inherit;
+        color: #3b4a3c;
+        margin-bottom: 10px;
+        outline: none;
+        text-transform: lowercase;
+      }
+
+      #notes::placeholder {
+        color: #aac9aa;
+      }
+
+      #notes:focus {
+        border-color: #8cc98c;
+      }
+
       #status {
         margin-top: 9px;
         font-size: 11px;
@@ -194,6 +218,7 @@
         <summary>topics <span id="topic-count"></span></summary>
         <div id="topics-list"></div>
       </details>
+      <textarea id="notes" placeholder="notes (optional)"></textarea>
       <button id="logBtn">Log to Notion</button>
       <div id="status"></div>
     </div>

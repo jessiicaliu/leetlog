@@ -3,6 +3,7 @@ const startPauseBtn = document.getElementById("startPauseBtn");
 const resetBtn = document.getElementById("resetBtn");
 const logBtn = document.getElementById("logBtn");
 const status = document.getElementById("status");
+const notesEl = document.getElementById("notes");
 
 const TOPICS = [
   "array", "string", "binary search", "dynamic programming", "dfs", "bfs",
@@ -106,11 +107,13 @@ logBtn.addEventListener("click", async () => {
   const elapsed = getElapsed(timerData);
 
   if (selectedTopics.size) problemData.tags = [...selectedTopics];
+  const notes = notesEl.value.trim();
 
   try {
-    await logToNotion(problemData, elapsed);
+    await logToNotion(problemData, elapsed, notes);
     status.textContent = "saved to notion!";
     resetTimer(timerDisplay, startPauseBtn);
+    notesEl.value = "";
     selectedTopics.clear();
     document.querySelectorAll(".topic-pill.selected").forEach(p => p.classList.remove("selected"));
     topicCount.textContent = "";

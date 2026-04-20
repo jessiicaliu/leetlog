@@ -1,4 +1,4 @@
-async function logToNotion(problemData, elapsed) {
+async function logToNotion(problemData, elapsed, notes = "") {
   const properties = {
     Question: {
       title: [{ text: { content: problemData.title } }]
@@ -35,7 +35,16 @@ async function logToNotion(problemData, elapsed) {
     },
     body: JSON.stringify({
       parent: { database_id: CONFIG.DATABASE_ID },
-      properties
+      properties,
+      ...(notes && {
+        children: [{
+          object: "block",
+          type: "paragraph",
+          paragraph: {
+            rich_text: [{ type: "text", text: { content: notes } }]
+          }
+        }]
+      })
     })
   });
 
