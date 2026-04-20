@@ -1,3 +1,4 @@
+// sends the problem data to notion via the api
 async function logToNotion(problemData, elapsed, notes = "") {
   const properties = {
     Question: {

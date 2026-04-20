@@ -1,3 +1,4 @@
+// timer helpers — formatting, tracking elapsed time, start/stop/reset
 let timerInterval = null;
 
 function formatDisplay(secs) {

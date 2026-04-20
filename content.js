@@ -1,3 +1,4 @@
+// runs on the leetcode page — scrapes the problem title, difficulty, and tags
 function getProblemData() {
   const raw =
     document.querySelector('h1')?.innerText?.trim() ||

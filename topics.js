@@ -1,3 +1,4 @@
+// topic pill selector — renders the list and tracks which ones are selected
 const TOPICS = [
   "array", "string", "binary search", "dynamic programming", "dfs", "bfs",
   "graph", "tree", "binary tree", "binary search tree", "linked list",

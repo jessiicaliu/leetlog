@@ -1,3 +1,4 @@
+// handles the popup ui — timer controls, logging to notion, and resetting state
 const timerDisplay = document.getElementById("timer");
 const startPauseBtn = document.getElementById("startPauseBtn");
 const resetBtn = document.getElementById("resetBtn");
