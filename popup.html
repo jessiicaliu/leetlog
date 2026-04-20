@@ -7,6 +7,22 @@
         padding: 12px;
         width: 200px;
       }
+      #not-leetcode {
+        display: none;
+        text-align: center;
+        padding: 16px 0;
+        color: #888;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      #not-leetcode span {
+        display: block;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      #main {
+        display: none;
+      }
       #timer {
         font-size: 32px;
         text-align: center;
@@ -40,13 +56,19 @@
     </style>
   </head>
   <body>
-    <div id="timer">00:00</div>
-    <div class="timer-btns">
-      <button id="startPauseBtn">Start</button>
-      <button id="resetBtn">Reset</button>
+    <div id="not-leetcode">
+      Open a LeetCode problem to start logging
     </div>
-    <button id="logBtn">Log to Notion</button>
-    <div id="status"></div>
+
+    <div id="main">
+      <div id="timer">00:00</div>
+      <div class="timer-btns">
+        <button id="startPauseBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+      <button id="logBtn">Log to Notion</button>
+      <div id="status"></div>
+    </div>
 
     <script src="config.js"></script>
     <script src="timer.js"></script>

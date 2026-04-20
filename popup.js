@@ -4,6 +4,14 @@ const resetBtn = document.getElementById("resetBtn");
 const logBtn = document.getElementById("logBtn");
 const status = document.getElementById("status");
 
+chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+  if (tab.url?.includes("leetcode.com/problems/")) {
+    document.getElementById("main").style.display = "block";
+  } else {
+    document.getElementById("not-leetcode").style.display = "block";
+  }
+});
+
 // Timer controls
 startPauseBtn.addEventListener("click", () => {
   chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
