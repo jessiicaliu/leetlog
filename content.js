@@ -35,3 +35,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse(getProblemData());
   }
 });
+
+// Stop the timer when the LeetCode submit button is clicked
+function watchSubmitButton() {
+  const observer = new MutationObserver(() => {
+    const btn = document.querySelector('[data-e2e-locator="console-submit-button"]');
+    if (btn && !btn._timerListenerAttached) {
+      btn._timerListenerAttached = true;
+      btn.addEventListener("click", () => {
+        chrome.storage.local.get(["timerBase", "timerStartedAt", "timerRunning"], (data) => {
+          if (data.timerRunning) {
+            const elapsed = (data.timerBase || 0) + Math.floor((Date.now() - data.timerStartedAt) / 1000);
+            chrome.storage.local.set({ timerBase: elapsed, timerRunning: false, timerStartedAt: null });
+          }
+        });
+      });
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+watchSubmitButton();
