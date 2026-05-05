@@ -2,7 +2,7 @@
 async function logToNotion(problemData, elapsed, notes = "") {
   const properties = {
     Question: {
-      title: [{ text: { content: problemData.title } }]
+      title: [{ text: { content: problemData.title, link: problemData.url ? { url: problemData.url } : null } }]
     },
     Finished: {
       date: { start: new Date().toISOString().split("T")[0] }
